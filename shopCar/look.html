@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>查看购物车页面</title>
+	<!-- <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script> -->
+	<script src="shop.js"></script>
+</head>
+<body>
+	<ul></ul>
+</body>
+<script>
+	var ul = document.getElementsByTagName("ul")[0];
+	var arr = cookieUtil.getCookie("car");
+	getDate()
+	function getDate(){
+		if (arr) {
+			if(typeof arr!='string'){
+						arr=JSON.stringify(arr)
+			}
+			arr = JSON.parse(arr);
+	        //存在cookie则取出来显示到页面上
+	        for (var i = 0; i < arr.length; i++) {
+	          //每个数组元素对应的是一个商品对象
+	          var goods = arr[i];
+	          var oson = document.createElement("li");
+	          oson.innerHTML = "商品名称：" + goods.g_name + "，商品数量" + goods.num + "，商品单价：" + goods.g_price+"<button onclick='del("+(function(k){ return k})(i)+")'>删除</button>";
+	          ul.appendChild(oson);
+	      }
+	  } 
+	}
+
+	function del(index){
+		if(arr && arr!=[]){
+			arr.splice(index,1)
+			ul.innerHTML=""
+			var time = new Date();
+			time.setDate(time.getDate() + 10);
+			cookieUtil.setCookie('car',JSON.stringify(arr),time)
+			if(arr.length==0){
+				cookieUtil.unsetCookie('car')
+			}
+			getDate()
+
+		}
+
+	}
+</script>
+</html>

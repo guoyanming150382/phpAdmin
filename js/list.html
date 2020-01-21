@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<script src="https://cdn.bootcss.com/jquery/2.0.2/jquery.min.js"></script>
+	<link rel="stylesheet" href="page.css" />
+	<script src="xlPaging.js"></script>
+	<script type="text/javascript" src="layer/layer.js"></script>
+	<style type="text/css">
+		button{
+			margin: 5px;
+		}
+	</style>
+</head>
+<body>
+	<div id="page"></div>
+	<script>
+		getPageData(1,10)
+		function getPageData(page,pagesize){
+			$.ajax({
+				url:'list.php',
+				type:'get',
+				data:{
+					page:page,
+					pagesize:pagesize
+				},
+				dataType:'json',
+				success:function(res){
+					console.log(res)
+					$("ul").empty()
+					var $ul=$('<ul></ul>')
+					for(var i=0;i<res.list.length;i++){
+						$ul.prepend('<li>'+res.list[i].newstitle+'<a href="detail.html?id='+res.list[i].newsid+'">查看</a><a href="delete.html?id='+res.list[i].newsid+'" class="dele">删除</a></li>')
+					}
+					$('body').append($ul)
+					$("#page").paging({
+			        nowPage: page, // 当前页码
+			        pageNum: Math.ceil(res.total/pagesize), // 总页码
+			        buttonNum: 6, //要展示的页码数量
+							canJump: 1,// 是否能跳转。0=不显示（默认），1=显示
+							showOne: 1,//只有一页时，是否显示。0=不显示,1=显示（默认）
+			        callback: function (num) { //回调函数
+			        	getPageData(num,pagesize)
+			        }
+			    });
+				}
+			})
+		}
+
+//			function getDate(result){
+//				
+//			}
+</script>
+</body>
+</html>

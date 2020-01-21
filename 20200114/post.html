@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+	<div id="do"></div>
+	<span class="p1"></span>
+	<span class="p2"></span>
+	<button id="t1">json</button>
+	<button id="t2">xml</button>
+	<button id="t3">jsonp</button>
+	<script type="text/javascript">
+		//json格式文件
+		$('#t1').click(function() {
+			$.getJSON('data.json',function(res,status,xhr){
+				console.log(res)
+				console.log(status)
+				console.log(xhr)
+				$('#do').append(`<p>${res.name}年龄${res.age}工作是${res.job}</p>`)
+			})
+		});
+		// xml请求方式
+		$('#t2').click(function() {
+			$.post('data.xml',function(res,status,xhr){
+				console.log(res)
+				// console.log($(res).find('root').find('name').html())
+				$('#do').html($(res).find('root').find('name').html()+$(res).find('root').find('po').html())
+			})
+		});
+		// jsonp跨域
+		$('#t3').click(function() {
+			$.ajax({
+				async:true,
+				type:'get',
+				url:'http://localhost/20200114/jsonp.php',
+				dataType:"jsonp",
+				jsonp:'head1',
+				jsonpCallback:'foot1',
+				success:function(res){
+					console.log(res)
+					var str="";
+					for(var i=0;i<res.shu.length;i++){
+						str+=`${res.shu[i].name}年龄是${res.shu[i].old}</br>`
+					}
+					$('.p2').html(str)
+				}
+			})
+		});
+	</script>
+</body>
+</html>

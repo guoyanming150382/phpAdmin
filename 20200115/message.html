@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+	<title>Bootstrap 101 Template</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/base.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/page.css" />
+	<script src="js/jquery-3.2.0.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+	<script src="js/xlPaging.js"></script>
+	<script src="js/layer/layer.js"></script>
+	<style type="text/css">
+		.kuang{
+			margin: 0 auto;
+			padding-left: 60px;
+		}
+		.kuang input{
+			margin-bottom:10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container ">
+		<div class="row">
+			<h1 class="text-center">小项目首页</h1>
+			<hr width="500px" />
+		</div>
+		<div class="row">
+			<!--左面面包屑导航-->
+			<div class="col-md-3">
+				<div class="span2" style="border: 1px solid #ddd">
+					<ul class="nav nav-pills nav-stacked " id="leftMuen">
+						<li class="active"><a href=" ">类别</a></li>
+						<li><a href="#">全部</a></li>
+						<!-- <li><a href="#">前端</a></li>
+						<li><a href="#">安卓</a></li>
+						<li><a href="#">IOS</a></li> -->
+					</ul>
+				</div>
+			</div>
+
+			<!--右面整体-->
+			<div class="col-md-8 panel panel-default">
+				<div class="panel-heading" id="zhuozi">
+					<button class="btn btn-primary" id="btnzeng">新增内容</button>
+				</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>标题</th>
+							<th class="text-center">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Tanmay</td>
+							<td>
+								<div class="btn-group m-auto" >
+									<button type="button" class="btn btn-success btn-xs">修改</button>
+									<button type="button" class="btn btn-info btn-xs">查看</button>
+									<button type="button" class="btn btn-danger btn-xs">删除</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div id="page"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			$.ajax({
+				url:'get.php?action=get_arctype&where=reid=0',
+				type:'get',
+				dataType:'json',
+				success:function(res){
+					for(var i=0;i<res.length;i++){
+						$('#leftMuen').append(`<li data-id="${res[i].id}"><a href="#">${res[i].typename}</a></li>`)
+					}
+				}
+			})
+			
+			// 分页
+			getPageData(1,5)//默认显示
+			function getPageData(page,pagesize){
+				$.ajax({
+					url:'get.php',
+					type:'get',
+					data:{
+						action:'get_list',
+						rows:pagesize,
+						orderBy:'DESC',//倒叙
+						orderField:'id',
+						offset:(page-1)*pagesize
+					},
+					dataType:'json',
+					success:function(res){
+						$('tbody').empty()
+						$.ajax({
+							url:'get.php?action=get_total',
+							type:'get',
+							dataType:'json',
+							success:function(res){
+								$('#page').paging({
+									nowPage:page,
+									pageNum: Math.ceil(res.total/pagesize), 
+									buttonNum:4,
+									canJump: 0,
+									showOne: 1,
+									callback: function (num) { //回调函数
+										getPageData(num,pagesize)
+									}
+								})
+							}
+						})
+						for(var i=0;i<res.length;i++){
+							$('tbody').append('<tr><td>'+res[i].title+'</td><td><div class="btn-group m-auto cao" ><button type="button" class="btn btn-success btn-xs" onclick="revise('+res[i].id+')">修改</button><button type="button" class="btn btn-info btn-xs" onclick="read('+res[i].id+')">查看</button><button type="button" class="btn btn-danger btn-xs" onclick="dellect('+res[i].id+')">删除</button></div></td></tr>')
+						}
+					}
+				})
+			}
+			// 点击显示内容
+			// all
+			$('.span2 #leftMuen').on('click', 'li:eq(1)', function() {
+				getPageData(1,5)
+			});
+			// 点击各类
+			$('.span2 #leftMuen').on('click', 'li', function() {
+				var id=$(this).attr('data-id')
+				getAllData(1,5,id)//当前的id
+				function getAllData(page,pagesize,id){
+					$.ajax({
+						url:'get.php',
+						type:'get',
+						data:{
+							offset:(page-1)*pagesize,
+							rows:pagesize,
+							action:'get_list',
+							orderField:'id',
+							orderBy:'DESC',
+							where:'typeid='+id
+						},
+						dataType:'json',
+						success:function(res){
+							$('tbody').empty()
+							$.ajax({
+								url:'get.php?action=get_total',
+								data:{
+									where:'typeid='+id
+								},
+								type:'get',
+								dataType:'json',
+								success:function(res){
+									$('#page').html("")
+									$('#page').paging({
+										nowPage:page,
+										pageNum: Math.ceil(res.total/pagesize),
+										buttonNum:4,
+										canJump: 0,
+										showOne: 1,
+									callback: function (num) { //回调函数
+										getAllData(num,pagesize,id)
+									}
+								})
+								}
+							})
+							for(var i=0;i<res.length;i++){
+								$('tbody').append('<tr><td>'+res[i].title+'</td><td><div class="btn-group m-auto cao" ><button type="button" class="btn btn-success btn-xs" onclick="revise('+res[i].id+')">修改</button><button type="button" class="btn btn-info btn-xs" onclick="read('+res[i].id+')">查看</button><button type="button" class="btn btn-danger btn-xs" onclick="dellect('+res[i].id+')">删除</button></div></td></tr>')
+							}
+						}
+					})
+				}
+			});
+			//新增  btnzeng
+			$('#zhuozi').on('click','#btnzeng',function() {
+				layer.confirm('填写信息', {
+					skin: 'layui-layer-lan',
+					area: ['390px', '380px'],
+					content:'<div class="form-group"><label for="user">标题</label><input type="text" class="form-control" autofocus id="user" placeholder="请输入标题"></div><div class="form-group"><label for="col">内容</label><input type="text" class="form-control" id="col" placeholder="请输入内容"></div><label for="slecy">选择类别</label><select id="slecy" class="form-control"><option value="1">前端</option><option value="2">安卓</option><option value="3">IOS</option></select>',
+				  	btn: ['确定','取消'] //按钮
+				  }, function(){
+
+				  	var typeid={
+				  		id:$('#slecy').val(),
+				  		typename:$('#slecy').text(),
+				  		reid:0
+				  	}
+				  	$.ajax({
+				  		url:'get.php',
+				  		type:'get',
+				  		dataType:'json',
+				  		data:{
+				  			title:$('#user').val(),
+				  			content:$('#col').val(),
+				  			action:'add_article',
+				  			typeid
+				  		},
+				  		success:function(res){
+				  			console.log('新增',res)
+				  			console.log('新增',$('#slecy').val())
+				  			if(!$('#col').val() && !$('#user').val()){
+				  				layer.msg('标题与内容不能为空')
+				  			}else if(!$('#col').val()){
+				  				layer.msg('内容不能为空')
+				  			}else if(!$('#user').val()){
+				  				layer.msg('标题不能为空')
+				  			}else{
+					  				setTimeout(function(){
+					  					window.parent.location.reload()
+					  				},500)
+					  				layer.msg('添加完毕');
+				  			}
+				  		}
+				  	})
+				  }, function(){
+				  	layer.msg('已取消');
+				  });
+				
+			});
+			// 查看
+			var read=function(id){
+				$.ajax({
+					url:'get.php',
+					type:'get',
+					dataType:'json',
+					data:{
+						action:'get_article',
+						id:id
+					},
+					success:function(res){
+						console.log('查看',res)
+						layer.open({
+							type: 1,
+							  skin: 'layui-layer-lan', //加上边框
+							  area: ['390px', '380px'], //宽高
+							  content: `<h1 class="text-center">${res.title}</h1><h2 class="text-center">${res.content}</h2><h3 class="text-center">类别id${res.id}</h3><h4 class="text-center">typeid(${res.typeid})</h4>`
+							});
+					}
+				})
+			}
+			// 删除
+			dellect=function(id){
+				$.ajax({
+					url:'get.php',
+					type:'get',
+					dataType:'json',
+					data:{
+						action:'delete_article',
+						id:id
+					},
+					success:function(res){
+						layer.confirm('确定删除吗', {
+							  btn: ['重要','奇葩'] //按钮
+							}, function(){
+								layer.msg('确定');
+								setTimeout(function(){
+									window.parent.location.reload()
+								},1000)
+							}, function(){
+								layer.msg('取消');
+							});
+					}
+				})
+			}
+			//修改
+			revise=function(id){
+				console.log(55544545)
+				$.ajax({
+					url:'get.php',
+					type:'get',
+					dataType:'json',
+					data:{
+						action:'get_article',
+						id:id
+					},
+					success:function(res){
+						var typeid=res.typeid;//获取到类别id
+
+						var arr=['前端','安卓','IOS'];//根据id判断显示什么类别
+						var str='<select id="newslecy" class="form-control">'
+						for(var i=0;i<3;i++){
+							if(typeid==(i+1)){
+								str+='<option value="'+(i+1)+'" selected>'+arr[i]+'</option>'
+							}else{
+								str+='<option value="'+(i+1)+'">'+arr[i]+'</option>'
+							}
+						}
+						str+='</select>'
+						layer.confirm('填写信息', {
+							skin: 'layui-layer-lan',
+							area: ['390px', '380px'],
+							content:`<div class="form-group"><label for="newuser">标题</label><input type="text" value="${res.title}" class="form-control" autofocus id="newuser" placeholder="请输入标题"></div><div class="form-group"><label for="newcol">内容</label><input type="text" class="form-control" value="${res.content}" id="newcol" placeholder="请输入内容"></div><label for="nslecy">选择类别</label>${str}`,
+					  	btn: ['确定','取消'] //按钮
+					  }, function(){
+					  	$.ajax({
+					  		url:'get.php',
+					  		type:'get',
+					  		dataType:'json',
+					  		data:{
+					  			id:res.id,
+					  			title:$('#newuser').val(),
+					  			content:$('#newcol').val(),
+					  			action:'update_article',
+					  			typeid:$('#newslecy').find("option:selected").val()
+					  		},
+					  		success:function(res){
+					  			if(!$('#newuser').val() && !$('#newcol').val()){
+					  				layer.msg('修改内容与标题不能为空')
+					  			}else if(!$('#newuser').val()){
+					  				layer.msg('修改标题不能为空')
+					  			}else if(!$('#newcol').val()){
+					  				layer.msg('修改内容不能为空')
+					  			}else{
+						  			for(var i=2;i<5;i++){
+						  				if($('#newslecy').find("option:selected").val()==(i-1)){
+						  					$('#leftMuen li:eq('+i+')').trigger('click')
+						  				}
+						  			}
+						  			layer.msg('修改完毕');
+						  		}
+					  		}
+					  	})
+					  }, function(){
+
+					  });
+					}
+				})
+			}
+		});
+	</script>
+	</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<script type="text/javascript">
+		// 设置期限 expires
+		var data=new Date()
+		data.setDate(data.getDate()+5)
+
+		var path='https://cookie'//只有在localhost域名下的级别才能访问到
+
+		document.cookie = 'user=' + encodeURIComponent('马达第二')+';expires='+data+';path='+path;	
+		var ap=decodeURIComponent(document.cookie);	
+		console.log(ap)	
+		var op=document.createElement('p')
+		document.body.appendChild(op)
+		op.innerHTML=ap
+	</script>
+</body>
+</html>

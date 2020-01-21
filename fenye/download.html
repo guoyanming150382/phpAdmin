@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<style type="text/css">
+		*{
+			margin: 0;padding: 0;
+		}
+		.all{
+			width: 300px;
+			height: 300px;
+			overflow:scroll;
+			border: 1px solid #000;
+		}
+		p{
+			height: 20px;
+		}
+		.jaizi{
+			position:absolute;
+			bottom:0;
+			left:0;
+			width:100%;
+		}
+		.outer{
+			position: relative;
+			width: 300px;
+			height: 300px;
+			position:relative;
+		}
+	</style>
+</head>
+<body>
+	<div class="outer">	
+		<div class="all">
+			<p>999</p>
+			<p>999</p>
+			<p>999</p>
+			<p>999</p>
+			<p>999</p>
+			<p>999</p>
+			<p>999</p>
+			<p>999</p>
+			<p>阿斯达的</p>
+			<p>阿斯达的</p>
+			<p>阿斯达的</p>
+			<p>阿斯达的</p>
+			<p>阿斯达的</p>
+			<p>阿斯达的</p>
+			<p>阿斯达的</p>
+		</div>
+		<div class="jaizi" style="color: red;display: none;">加载中..........</div>
+	</div>
+	<script type="text/javascript">
+		$('.all').scroll(function() {
+			var flag=true
+			// console.log("滚动条滚动的高度",$(this).scrollTop())
+			// console.log("all的自身高度",$(this).height())
+			// console.log("滚动条的高度",$(this)[0].scrollHeight)
+			if(($(this).scrollTop()+$(this).height())>=$(this)[0].scrollHeight){
+				if(flag){
+					flag=false
+					$('.jaizi').show()
+					setTimeout(function(){
+						$('.jaizi').hide()
+						flag=true
+						$('.all').append(`<p>999</p>
+							<p>999</p>
+							<p>999</p>
+							<p>999</p>
+							<p>999</p>
+							<p>999</p>
+							<p>999</p>
+							<p>999</p>
+							<p>阿斯达的</p>
+							<p>阿斯达的</p>
+							<p>阿斯达的</p>
+							<p>阿斯达的</p>
+							<p>阿斯达的</p>
+							<p>阿斯达的</p>
+							<p>阿斯达的</p>`)
+					},1000)
+				}
+			}
+		});
+	</script>
+</body>
+</html>

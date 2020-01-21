@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+			<script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+		<script src='search.js'></script>
+		<script src='config.js'></script>
+	</head>
+	<body>
+		<div class="dopo">
+			<dd></dd>
+			<div class="content">
+				<img src="" alt="" />
+				<p></p>
+			</div>
+		</div>
+		<script>
+			var ERR_OK=200
+			var id = getArgs().id
+			$.ajax({
+				url:'detail.php',
+				type:'get',
+				data:{
+					id:id
+				},
+				dataType:'json',
+				success:function(res){
+					if(res.code==ERR_OK){
+						console.log(res.data)
+							$(".dopo").find("dd").text(res.data.newstitle)
+							$(".dopo").find("img").attr('src',res.data.imgurl)
+							$(".dopo").find("p").text(res.data.newscontent)
+					}
+				}
+			})
+		</script>
+	</body>
+</html>

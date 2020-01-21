@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bootstrap 模板</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/base.css" rel="stylesheet">
+	<script src="js/jquery-3.2.0.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<h1 class="text-center">登录</h1>
+		<form >
+			<div class="form-group" >
+				<label for="username">用户名</label>
+				<input type="text" class="form-control" id="username" placeholder="填写用户名">
+				<span id="usermessage" class="text-danger"></span>
+			</div>
+			<div class="form-group">
+				<label for="password">密码</label>
+				<input type="password" class="form-control" id="password" placeholder="Password">
+				<span id="passmessage" class="text-danger"></span>
+			</div>
+			<button type="submit" class="btn btn-primary btn-lg btn-block">提交</button>
+		</form>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var module={
+				getData:function(res){
+					if(!res.success){
+						if(res.errors.username && res.errors.password){
+							console.log(res.errors.username+res.errors.password)
+							$('#usermessage').html('用户名错误')
+							$('#passmessage').html('密码错误')
+						}else if(res.errors.username){
+							$('#usermessage').html('用户名不能为空')
+							$('#passmessage').html(' ')
+						}else if(res.errors.password){
+							$('#usermessage').html(' ')
+							$('#passmessage').html('密码不能为空 ')
+						}
+					}else if(res.success==true){
+						$('#usermessage').html(' ')
+						$('#passmessage').html(' ')
+						location.href="messagefu.html"
+					}
+				},
+				render:function(url,type,data,dataType,callBack){
+					$.ajax({
+						url:url,
+						type:type,
+						data:data,
+						dataType:dataType,
+						success:function(res){
+							callBack(res)
+						}
+					})
+				},
+				handclick:function(){
+					$('.btn').click(function(e) {
+						e.preventDefault()
+						module.render('get.php','post',{username:$('#username').val(),password:$('#password').val(),action:'login'},'json',function(res){module.getData(res)});
+					});
+				}
+			}
+			module.handclick();
+		});
+	</script>
+</body>
+</html>

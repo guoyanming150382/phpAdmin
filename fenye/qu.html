@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		.all{
+			width: 302px;
+			height: 318px;
+			border: 1px solid #000;
+		}
+		.top{
+			width: 300px;
+			height: 290px;
+			border: 1px solid blue;
+			overflow: scroll;
+		}
+		.foot{
+			width: 300px;
+			height: 20px;
+			border: 1px solid red;
+			display: none;text-align: center;
+			font-weight: 800;
+		}
+	</style>
+</head>
+<body>
+	<div class="all">
+		<div class="top">
+			
+		</div>
+		<div class="foot">...加载中...</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var request=function(){
+				$.ajax({
+					url:'down.php',
+					type:'get',
+					dataType:'json',
+					success:function(res){
+						console.log(res.list)
+						for(var i=0;i<res.list.length;i++){
+							$('.top').append(`<p>${res.list[i].newscontent}</p>`)
+						}
+					}
+				})
+			}
+			request()
+			$('.top').scroll(function() {
+				var flag=true;
+				if($(this)[0].scrollHeight<=($(this).scrollTop()+$(this).height())){
+					if(flag){
+						flag=false;
+						$('.foot').show()
+						setTimeout(function(){
+							flag=true;
+							$('.foot').hide()
+							request()
+						},1000)
+					}
+				}
+			});
+		});
+	</script>
+</body>
+</html>

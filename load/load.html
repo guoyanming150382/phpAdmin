@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.min.js"></script>
+</head>
+<body>
+	<!-- 	
+	load只能get请求 
+	$.get 有三种传参方法
+	原生ajax请求步骤，总结
+	-->
+	<div class="all"></div>
+	<div class="all1"></div>
+	<div class="all2"></div>
+	<div class="all3"></div>
+	<button class="btn">点1</button><br>
+	<button class="btn1">点2</button>
+	<button class="btn2">点3</button>
+	<button class="btn2">点4</button>
+	<script type="text/javascript">
+		//请求方式是get，php上要写get
+		$('.btn').click(function() {
+			$('.all').load('json.php?url=tian')
+		});
+		$('.btn').click(function() {
+
+		});
+		//请求方式是post，php上要写post
+		$('.btn1').click(function() {
+			$('.all1').load('json.php',{url:'tian'})
+		});
+		// $('.btn2').click(function() {
+		// 	$('.all2').load({
+		// 		url:'http://127.0.0.1:3000/douban',
+		// 		type:'get'
+		// 		success:function(res){
+		// 			console.log(res)
+		// 		}
+		// 	})
+		// });
+
+		// get的三种请求方式
+		$.get('http://127.0.0.1:3000/douban?name=123&old=96',function(res,status,xhr){
+			console.log("get",res)
+			console.log(status)
+		})
+		$.get('http://127.0.0.1:3000/list',{name:'阿萨德',old:79},function(res,status,xhr){
+			console.log("deop",res)
+			console.log(status)
+		})
+		$.get('http://127.0.0.1:3000/list','name=阿萨德,old=79'
+			,function(res,status,xhr){
+			console.log("deop",res)
+			console.log(status)
+		})
+	</script>
+</body>
+</html>

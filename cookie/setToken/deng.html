@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+		<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+		
+	</head>
+	<body>
+		姓名：<input type="text" id="name" />
+		密码：<input type="password" id="pwd"/>
+		<button id="deng">登录</button>
+	</body>
+	<script>
+		$('#deng').click(function(){
+			$.ajax({
+				url:"deng.php",
+				type:"post",
+				data:{
+					username:$('#name').val(),
+					password:$('#pwd').val(),
+				},
+				dataType:'json',
+				success:function(res){
+					console.log(res)
+					//成功之后设置cookie
+					if(res.code==200){
+						$.cookie('token',res.token)
+						location.href="shouye.html"
+					}
+				}
+			});
+		})
+	</script>
+</html>

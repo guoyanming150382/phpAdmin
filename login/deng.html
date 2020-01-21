@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0;margin: 0;
+		}
+		.all{
+			position: fixed;
+			top: 0;left: 0;right: 0;bottom: 0;
+			background: rgba(0,0,0,0.3);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.login{
+			width: 400px;height: 400px;
+			border: 1px solid #000;
+			overflow: hidden;
+		}
+		.head{
+			width: 100%;height: 50px;
+			display: flex;
+			flex-direction: row;
+		}
+		.headTab{
+			width: 198px;height: 100%;
+			border: 1px solid #000;
+			text-align: center;line-height: 50px;
+		}
+		.content{
+			width: 100%;height: 348px;
+			background: green;
+		}
+		.on{
+			background: red;color: #fff;
+		}
+		.content{
+			display: none;
+		}
+		.active{
+			display: block;
+		}
+		.login1{
+			width: 100%;
+			height: 60px;
+			line-height: 60px;
+			padding-left: 70px;
+		}
+		.login1 span{
+			visibility: middle;
+		}
+		.login1 input{
+			visibility: middle;
+		}
+		.login1 label{
+			margin-right: 15px;
+		}
+		.login1 label input{
+			margin-right: 5px;
+		}
+		.tijiao{
+			display: flex;
+			justify-content: space-around;
+		}
+		.tijiao input{
+			width: 80px;height: 40px;border: none;
+		}
+	</style>
+</head>
+<body>
+	<!-- jQuery.type()判断数据类型 -->
+	<div class="all">
+		<div class="login">
+			<div class="head">
+				<div class="headTab on">登录</div>
+				<div class="headTab">注册</div>
+			</div>
+			<div class="content active">
+				<p class="login1">
+					<span>用户名：</span>
+					<input id="user" type="text">
+				</p>
+				<p class="login1">
+					<span><span style="margin-right: 1em">密</span>码：</span>
+					<input id="mima" type="password">
+				</p>
+				<p class="login1">
+					<span><span style="margin-right: 1em">时</span>间：</span>
+					<label for="day"><input type="radio" id="day" name="radio" checked="checked" value="1">一天</label>
+					<label for="week"><input type="radio" id="week" name="radio" value="2">一周</label>
+					<label for="month"><input type="radio" id="month" name="radio" value="3">一月</label>
+				</p>
+				<p class="tijiao register">
+					<input type="button" id="btn" value="登录">
+					<input type="button" value="忘记密码">
+				</p>
+			</div>
+			<div class="content register">
+				<p class="login1">
+					<span>用户名：</span>
+					<input type="text">
+				</p>
+				<p class="login1">
+					<span><span style="margin-right: 1em">密</span>码：</span>
+					<input type="password">
+				</p>
+				<p class="tijiao register">
+					<input type="button" value="注册">
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+	$('.head .headTab').click(function() {
+		$(this).addClass('on').siblings().removeClass('on');
+		var index=$(this).index();
+		$('.content').eq(index).addClass('active').siblings().removeClass('active')
+	});
+	$('#btn').click(function() {
+		console.log($("#user").val())
+		console.log($("#mima").val())
+		console.log($("input[type='radio']").val())
+		$.ajax({
+			url:'login.php',
+			type:'post',
+			dataType:'json',
+			data:{
+				username:$("#user").val(),
+				password:$("#mima").val(),
+				radioval:$("input[type='radio']:checked").val(),
+			},
+			success:function(res){
+				console.log(res)
+				if(res.code==200){
+					location.href="xiang.html"
+				}
+			}
+		})
+	});
+	
+</script>
+</html>

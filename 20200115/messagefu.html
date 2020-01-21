@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+	<title>Bootstrap 101 Template</title>
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/base.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/page.css" />
+	<script src="js/jquery-3.2.0.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="https://cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+	<script src="js/xlPaging.js"></script>
+	<script src="js/layer/layer.js"></script>
+	<style type="text/css">
+		.kuang{
+			margin: 0 auto;
+			padding-left: 60px;
+		}
+		.kuang input{
+			margin-bottom:10px;
+		}
+	</style>
+</head>
+
+<body>
+	
+	<nav class="navbar navbar-inverse" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">首页</a>
+			</div>
+			<div>
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">用户名</a></li>
+					<li><a href="#">用户头像</a></li>
+					<li><a href="#">登录状态</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="container ">
+		<div class="row">
+			<h1 class="text-center">小项目首页</h1>
+			<hr width="500px" />
+		</div>
+		<div class="row">
+			<!--左面面包屑导航-->
+			<div class="col-md-3">
+				<div class="span2" style="border: 1px solid #ddd">
+					<ul class="nav nav-pills nav-stacked " id="leftMuen">
+						<li class="active"><a href=" ">类别</a></li>
+						<li><a href="#">全部</a></li>
+						<!-- <li><a href="#">前端</a></li>
+						<li><a href="#">安卓</a></li>
+						<li><a href="#">IOS</a></li> -->
+					</ul>
+				</div>
+			</div>
+
+			<!--右面整体-->
+			<div class="col-md-8 panel panel-default">
+				<div class="panel-heading" id="zhuozi">
+					<button class="btn btn-primary" id="btnzeng">新增内容</button>
+				</div>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>标题</th>
+							<th class="text-center">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Tanmay</td>
+							<td>
+								<div class="btn-group m-auto" >
+									<button type="button" class="btn btn-success btn-xs">修改</button>
+									<button type="button" class="btn btn-info btn-xs">查看</button>
+									<button type="button" class="btn btn-danger btn-xs">删除</button>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div id="page"></div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			var module={
+				init:{	
+						//左侧导航初始化
+						inintLeft:function(){
+							module.getRender('get.php',{action:'get_arctype',where:'reid=0'},'get','json',function(res){module.getDate.getLeftData(res)})
+						},
+						//右侧导航初始化
+						initRight:function(page,pagesize){
+							module.getRender('get.php',{action:'get_list',rows:pagesize,orderBy:'DESC',orderField:'id',offset:(page-1)*pagesize},'get','json',function(res){module.getDate.getRightData(res,pagesize,page)})
+						},
+						// 点击各分类a
+						initClickClass:function(page,pagesize,id){
+							module.getRender('get.php',{offset:(page-1)*pagesize,rows:pagesize,action:'get_list',orderField:'id',orderBy:'DESC',where:'typeid='+id},'get','json',function(res){module.getDate.getfen(res,pagesize,page,id)})
+						},
+						// 新增
+						add:function(){
+							layer.confirm('填写信息', {
+								skin: 'layui-layer-lan',
+								area: ['390px', '380px'],
+								content:'<div class="form-group"><label for="user">标题</label><input type="text" class="form-control" autofocus id="user" placeholder="请输入标题"></div><div class="form-group"><label for="col">内容</label><input type="text" class="form-control" id="col" placeholder="请输入内容"></div><label for="slecy">选择类别</label><select id="slecy" class="form-control"><option value="1">前端</option><option value="2">安卓</option><option value="3">IOS</option></select>',
+								  	btn: ['确定','取消'] //按钮
+								  }, function(){
+								  	module.getRender('get.php',
+								  		{title:$('#user').val(),content:$('#col').val(),action:'add_article',typeid:{id:$('#slecy').val(),typename:$('#slecy').text(),reid:0}},'get','json',function(res){module.getDate.getAddData(res)})
+								  	
+								  }, function(){
+								  	layer.msg('已取消');
+								  });
+						},
+						// 查看
+						search:function(id){
+							module.getRender('get.php',{action:'get_article',id:id},'get','json',function(res,id){module.getDate.getSearch(res,id)})
+						},
+						//delle
+						delle:function(id){
+							module.getRender('get.php',{action:'delete_article',id:id},'get','json',function(res,id){module.getDate.getDell(res,id)})
+						},
+						revis:function(id){
+							module.getRender('get.php',{action:'get_article',id:id},'get','json',function(res,id){module.getDate.getResvice(res,id)})
+						}
+					},
+				// 请求ajax
+				getRender:function(url,data,type,dataType,callback,page,pagesize){
+					$.ajax({
+						url:url,
+						data:data,
+						type:type,
+						dataType:dataType,
+						success:function(res){
+							callback(res)
+						}
+					})
+				},
+				// 渲染数据
+				getDate:{
+					// 默认
+					getLeftData:function(res){
+						for(var i=0;i<res.length;i++){
+							$('#leftMuen').append(`<li data-id="${res[i].id}"><a href="#">${res[i].typename}</a></li>`)
+						}
+					},
+					getRightData:function(res,pagesize,page){
+						$('tbody').empty();
+						module.getRender('get.php',{action:'get_total'},'get','json',function(res){module.getDate.getPaging(res,pagesize,page)},)
+						for(var i=0;i<res.length;i++){
+							$('tbody').append('<tr><td>'+res[i].title+'</td><td><div class="btn-group m-auto cao" ><button type="button" class="btn btn-success btn-xs" onclick="revise('+res[i].id+')">修改</button><button type="button" class="btn btn-info btn-xs" onclick="read('+res[i].id+')">查看</button><button type="button" class="btn btn-danger btn-xs" onclick="dellect('+res[i].id+')">删除</button></div></td></tr>')
+						}
+					},
+					// 分页
+					getPaging:function(res,pagesize,page){
+						$('#page').paging({
+							nowPage:page,
+							pageNum: Math.ceil(res.total/pagesize), 
+							buttonNum:4,
+							canJump: 0,
+							showOne: 1,
+							callback: function (num) { 
+								module.init.initRight(num,pagesize)
+							}
+						})
+					},
+					getPaging2:function(res,pagesize,page,id){
+						$('#page').html("")
+						$('#page').paging({
+							nowPage:page,
+							pageNum: Math.ceil(res.total/pagesize),
+							buttonNum:4,
+							canJump: 0,
+							showOne: 1,
+							callback: function (num) { //回调函数
+								module.init.initClickClass(num,pagesize,id)
+							}
+						})
+					},
+					// 各类点击分类
+					getfen:function(res,pagesize,page,id){
+						$('tbody').empty()
+						module.getRender('get.php',{where:'typeid='+id,action:'get_total'},'get','json',function(res){module.getDate.getPaging2(res,pagesize,page,id)})
+						for(var i=0;i<res.length;i++){
+							$('tbody').append('<tr><td>'+res[i].title+'</td><td><div class="btn-group m-auto cao" ><button type="button" class="btn btn-success btn-xs" onclick="revise('+res[i].id+')">修改</button><button type="button" class="btn btn-info btn-xs" onclick="read('+res[i].id+')">查看</button><button type="button" class="btn btn-danger btn-xs" onclick="dellect('+res[i].id+')">删除</button></div></td></tr>')
+						}
+					},
+					getAddData:function(res){
+						if(!$('#col').val() && !$('#user').val()){
+							layer.msg('标题与内容不能为空')
+						}else if(!$('#col').val()){
+							layer.msg('内容不能为空')
+						}else if(!$('#user').val()){
+							layer.msg('标题不能为空')
+						}else{
+							layer.msg('添加完毕');
+							setTimeout(function(){
+								window.parent.location.reload()
+							},500)
+						}
+					},
+					getSearch:function(res,id){
+						layer.open({
+							type: 1,
+							skin: 'layui-layer-lan', //加上边框
+							area: ['390px', '380px'], //宽高
+							content: `<h1 class="text-center">${res.title}</h1><h2 class="text-center">${res.content}</h2><h3 class="text-center">类别id${res.id}</h3><h4 class="text-center">typeid(${res.typeid})</h4>`
+						});
+					},
+					getDell:function(res,id){
+						layer.confirm('确定删除吗', {
+							btn: ['重要','奇葩'] //按钮
+						}, function(){
+							layer.msg('确定');
+							setTimeout(function(){
+								window.parent.location.reload()
+							},1000)
+						}, function(){
+							layer.msg('取消');
+						});
+					},
+					getResvice:function(res,id){
+						var typeid=res.typeid;//获取到类别id
+								var arr=['前端','安卓','IOS'];//根据id判断显示什么类别
+								var str='<select id="newslecy" class="form-control">'
+								for(var i=0;i<3;i++){
+									if(typeid==(i+1)){
+										str+='<option value="'+(i+1)+'" selected>'+arr[i]+'</option>'
+									}else{
+										str+='<option value="'+(i+1)+'">'+arr[i]+'</option>'
+									}
+								}
+								str+='</select>'
+								layer.confirm('填写信息', {
+									skin: 'layui-layer-lan',
+									area: ['390px', '380px'],
+									content:`<div class="form-group"><label for="newuser">标题</label><input type="text" value="${res.title}" class="form-control" autofocus id="newuser" placeholder="请输入标题"></div><div class="form-group"><label for="newcol">内容</label><input type="text" class="form-control" value="${res.content}" id="newcol" placeholder="请输入内容"></div><label for="nslecy">选择类别</label>${str}`,
+							  	btn: ['确定','取消'] //按钮
+							  }, function(){
+							  	module.getRender('get.php',{id:res.id,title:$('#newuser').val(),content:$('#newcol').val(),action:'update_article',typeid:$('#newslecy').find("option:selected").val()},'get','json',function(res,id){module.getDate.getResvice2(res)
+							  	})
+							  });
+							},
+							getResvice2:function(res){
+								if(!$('#newuser').val() && !$('#newcol').val()){
+									layer.msg('修改内容与标题不能为空')
+								}else if(!$('#newuser').val()){
+									layer.msg('修改标题不能为空')
+								}else if(!$('#newcol').val()){
+									layer.msg('修改内容不能为空')
+								}else{
+									for(var i=2;i<5;i++){
+										if($('#newslecy').find("option:selected").val()==(i-1)){
+											$('#leftMuen li:eq('+i+')').trigger('click')
+										}
+									}
+									layer.msg('修改完毕');
+								}
+							}
+						},
+					}
+			// 初始化
+			module.init.inintLeft()
+			module.init.initRight(1,5)
+			// 点击显示内容
+			// all
+			$('.span2 #leftMuen').on('click', 'li:eq(1)', function() {
+				module.init.initRight(1,5)
+			});
+			// 点击各类
+			$('.span2 #leftMuen').on('click', 'li', function() {
+				var id=$(this).attr('data-id')
+				module.init.initClickClass(1,5,id)
+			});
+			//新增  btnzeng
+			$('#zhuozi').on('click','#btnzeng',function() {
+				module.init.add();
+			});
+			// 查看
+			read=function(id){
+				module.init.search(id)
+			}
+			// 删除
+			dellect=function(id){
+				module.init.delle(id)
+			}
+			//修改
+			revise=function(id){
+				module.init.revis(id)
+				
+			}
+		});
+	</script>
+	</html>
+
+
+
+
+
+
+
+	<!-- <script>
+		var InitModule={
+			init:function(){
+				AsideModule.init()
+				ContentModule.init()
+				PagesModule.init()
+			}
+		}
+		var AsideModule={
+			init:function(){
+				AsideModule.render()
+
+			},
+			render(){
+				$.ajax({
+					success(res){
+						AsideModule.getData()
+						AsideModule.bindEvent()
+					}
+				})
+			},
+			getData(){
+
+			},
+			bindEvent(){
+
+			}
+		}
+		var ContentModule={
+			init:function(){
+
+			}
+		}
+		var PagesModule={
+			init:function(){
+
+			}
+		}
+
+		InitModule.init()
+	</script> -->

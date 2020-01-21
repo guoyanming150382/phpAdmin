@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>查看购物车页面</title>
+	<script src="shop.js"></script>
+	
+</head>
+<body>
+	<ul>
+		<li>
+			<span>商品1</span>
+			<span>食品</span>
+			<span>￥18.00</span>
+			<input type="button" value="加入购物车">
+		</li>
+		<li>
+			<span>商品2</span>
+			<span>衣服</span>
+			<span>￥200.00</span>
+			<input type="button" value="加入购物车">
+		</li>
+		<li>
+			<span>商品3</span>
+			<span>带鱼</span>
+			<span>￥300.00</span>
+			<input type="button" value="加入购物车">
+		</li>
+		<li>
+			<span>商品4</span>
+			<span>黄瓜</span>
+			<span>￥400.00</span>
+			<input type="button" value="加入购物车">
+		</li>
+		<li>
+			<span>商品5</span>
+			<span>自行车</span>
+			<span>￥500.00</span>
+			<input type="button" value="加入购物车">
+		</li>
+		<li>
+			<span>商品6</span>
+			<span>骑车</span>
+			<span>￥600.00</span>
+			<input type="button" value="加入购物车">
+		</li>
+		<li>
+			<span>商品7</span>
+			<span>海带</span>
+			<span>￥700.00</span>
+			<input type="button" value="加入购物车">
+		</li>
+		<li>
+			<span>商品8</span>
+			<span>春卷</span>
+			<span>￥800.00</span>
+			<input type="button" value="加入购物车">
+		</li>
+	</ul>
+	<a href="look.html" rel="external nofollow" >查看购物车</a>
+</body>
+<script type="text/javascript">
+	window.onload = function () {
+		var input = document.getElementsByTagName("input");
+		var arr = cookieUtil.getCookie("car") ? 
+		JSON.parse(cookieUtil.getCookie("car")) : [];
+		for (var j = 0; j < input.length; j++) {
+			input[j].onclick = function () {
+				var g_id = this.parentNode.children[0].innerHTML;
+				var g_name = this.parentNode.children[1].innerHTML;
+				var g_price = this.parentNode.children[2].innerHTML;
+				for (var i = 0; i < arr.length; i++) {
+					if (arr[i].g_id == g_id) {
+						arr[i].num++;
+						break;
+					}
+				}
+				if (i == arr.length) {
+					console.log('2')
+					var goods = {
+						"g_id" : g_id,
+						"g_name" : g_name,
+						"g_price" : g_price,
+						num : 1
+					}
+
+					arr.push(goods);
+					console.log(arr)
+				}
+				var date = new Date();
+				date.setDate(date.getDate() + 10);
+				cookieUtil.setCookie("car", JSON.stringify(arr), date); 
+			}
+		}
+	}
+</script>
+</html>

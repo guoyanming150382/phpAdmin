@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+			list-style: none;
+		}
+		.menu{
+			margin: 0 auto;
+			width: 100px;
+			text-align: center;
+			line-height: 50px;
+		}
+		dd{
+			display: none;
+		}
+		dl{
+			border: 1px solid #000;
+		}
+	</style>
+</head>
+<body>
+	<div class="menu">
+		<dl>菜单一</dl>
+		<dd>
+			<li>菜单二</li>
+			<li>菜单二</li>
+			<li>菜单二</li>
+			<li>菜单二</li>
+			<li>菜单二</li>
+			<li>菜单二</li>
+			<li>菜单二</li>
+		</dd>
+	</div>
+	<script type="text/javascript">
+		$('dl').mousemove(function(){
+			$('dd').slideDown();
+		})
+		$('dl').mouseout(function(){
+			$('dd').slideUp();
+		})
+	</script>
+</body>
+</html>

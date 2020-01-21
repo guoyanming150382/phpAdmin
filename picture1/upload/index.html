@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+	
+	<head>
+	  <meta charset="UTF-8">
+	  <title>Title</title>
+	  <style>
+	  	#box{
+	  		border:1px dashed #000;
+	  		width:80px;
+	  		height:80px;
+	  		text-align: center;
+	  		line-height: 80px;
+	  		font-size:60px;
+	  		position: relative;
+	  	}
+	  	#file{
+	  		position: absolute;
+	  		left: 0;
+	  		top:0;
+	  		width:80px;
+	  		height:80px;
+	  		opacity:0;
+	  		/*border:1px solid #ccc;*/
+	  		display: block;
+	  	}
+	  </style>
+	</head>
+	<body>
+		
+		<div id="box">
+			+
+			<form action="">
+				<input type="file" id="file"/>
+			</form>
+		</div>
+		<div id="result"></div>
+		<script>
+			var fileInp=document.getElementById('file')
+			fileInp.onchange=function(){
+				console.log(this.files[0])
+				var size=this.files[0].size/1024/1024 
+				var name=this.files[0].name  
+				var type=this.files[0].type  
+				console.log(size,name,type)
+//				if(size>=2){
+//					alert('图片不得超过2M')
+//					return false
+//				}
+//				if(!/\.(jpg|jpeg|png|JPG|PNG)$/.test(type)){
+//					alert('图片格式不正确')
+//					return false
+//				}
+
+				let data = new FormData();
+				for(let pic of fileInp.files){
+			        data.append('pic',pic);
+			   }
+		        console.log(data)
+		        let xhr = new XMLHttpRequest();
+		        xhr.onreadystatechange = function(){
+		            if(xhr.readyState == 4 && xhr.status==200){
+		                alert(xhr.responseText);
+		            }
+		        };
+		        xhr.open('POST','demo.php');
+		        xhr.send(data)
+//				var reader = new FileReader(); 
+//			    //将文件以Data URL形式读入页面 
+//			    reader.readAsDataURL(this.files[0]); 
+//			    reader.onload=function(e){ 
+//			        var result=document.getElementById("result"); 
+//			        //显示文件 
+//			        result.innerHTML='<img src="' + this.result +'" alt="" />'; 
+//			    }
+			}
+			
+			function sub1() {
+			        let form = document.getElementById('file');
+			        console.log(form)
+			        let data = new FormData(form);
+			        let xhr = new XMLHttpRequest();
+			        xhr.onreadystatechange = function(){
+			            if(xhr.readyState == 4 && xhr.status==200){
+			                alert(xhr.responseText);
+			            }
+			        };
+			        xhr.open('POST','demo.php');
+			        xhr.send(data)
+			   }
+		</script>
+	  	<div style="margin-left: 30px; margin-top: 30px">
+		    <form action="">
+		      <!--{% csrf_token %}-->
+		    <h3>用户注册</h3>
+		    <p>用户名：<input type="text" name="userName"></p>
+		    <p>密码：<input type="password" name="password"></p>
+		    <p>邮箱：<input type="text" name="email"></p>
+		      <input id="avatar" type="text" value="/static/images/sample.png" name="avatar" style="width: 400px;height: 200px;"> <!--{# 实际应用中要将该input标签隐藏，display:none; #}-->
+		      <p><input type="submit" value="注册"></p>
+		      </form>
+		    <div style="position: absolute; top: 85px; left: 300px;">
+		    <input id="avatarSlect" type="file" style="position: absolute;float: left; z-index: 10; opacity: 0;width: 100px; height: 100px;">
+		    <!--<img id="avatarPreview" src="/static/images/sample.png" title="点击更换图片" style="position: absolute; z-index: 9; float: left; width: 100px; height: 100px">-->
+		      </div>
+	  	</div>
+	</body>
+	<!--<script src="/static/jquery-3.2.1.js"></script>-->
+	<script>
+//		  $(function () {
+//		      bindAvatar();
+//		 });
+//		  function bindAvatar() {
+//		      if(window.URL.createObjectURL){
+//		        bindAvatar3();
+//		      }else if(window.FileReader){
+//		        bindAvatar2();
+//		      }else {
+//		        bindAvatar1();
+//		      }
+//		 }
+		  /*Ajax上传至后台并返回图片的url*/
+//		  function bindAvatar1() {
+//		    $("#avatarSlect").change(function () {
+//		    var csrf = $("input[name='csrfmiddlewaretoken']").val();
+//		    var formData=new FormData();
+//		    formData.append("csrfmiddlewaretoken",csrf);
+//		    formData.append('avatar', $("#avatarSlect")[0].files[0]);  /*获取上传的图片对象*/
+//		    $.ajax({
+//		      url: '/upload_avatar/',
+//		          type: 'POST',
+//		          data: formData,
+//		          contentType: false,
+//		          processData: false,
+//		          success: function (args) {
+//		        console.log(args);  /*服务器端的图片地址*/
+//		              $("#avatarPreview").attr('src','/'+args);  /*预览图片*/
+//		              $("#avatar").val('/'+args);  /*将服务端的图片url赋值给form表单的隐藏input标签*/
+//		     }
+//		      })
+//		 })
+//		  }
+		  /*window.FileReader本地预览*/
+//		  function bindAvatar2() {
+//		    console.log(2);
+//		       $("#avatarSlect").change(function () {
+//		           var obj=$("#avatarSlect")[0].files[0];
+//		           var fr=new FileReader();
+//		           fr.οnlοad=function () {
+//		               $("#avatarPreview").attr('src',this.result);
+//		               console.log(this.result);
+//		               $("#avatar").val(this.result);
+//		      };
+//		      fr.readAsDataURL(obj);
+//		    })
+//		 }
+//		 /*window.URL.createObjectURL本地预览*/
+//		 function bindAvatar3() {
+//		   console.log(3);
+//		      $("#avatarSlect").change(function () {
+//		          var obj=$("#avatarSlect")[0].files[0];
+//		          var wuc=window.URL.createObjectURL(obj);
+//		           $("#avatarPreview").attr('src',wuc);
+//		           $("#avatar").val(wuc);
+//		{#           $("#avatarPreview").load(function () {#}    /*当图片加载后释放内存空间，但在jQuery3.2.1中会报错。浏览器关闭后也会自动释放*/
+//		{#               window.URL.revokeObjectURL(wuc);#}
+//		{#      })#}
+//		   })
+//		 }
+//	</script>
+</html>

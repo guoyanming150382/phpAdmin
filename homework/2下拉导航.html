@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<style type="text/css">
+		*{
+			padding: 0;margin: 0;
+			list-style: none;
+		}
+		ul{	
+			width: 300px;
+			margin: 20px auto;
+			display: flex;
+			flex-direction: row;
+		}
+		ul li{
+			width: 100px;
+			text-align: center;
+		}
+		dl{
+			border: 1px solid #000;
+		}
+		.menu{
+			display: none;
+		}
+	</style>
+</head>
+<body>
+	<ul>
+		<li>
+			<dl class="top">
+				<dt>菜单一</dt>
+			</dl>
+			<dl class="menu">
+				<dd>食谱</dd>
+				<dd>食谱</dd>
+				<dd>食谱</dd>
+				<dd>食谱</dd>
+				<dd>食谱</dd>
+			</dl>
+		</li>
+		<li>
+			<dl class="top">
+				<dt>菜单2</dt>
+			</dl>
+			<dl class="menu">
+				<dd>食谱</dd>
+				<dd>食谱</dd>
+				<dd>食谱</dd>
+				<dd>食谱</dd>
+				<dd>食谱</dd>
+			</dl>
+		</li>
+	</ul>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('ul li').hover(function(){
+				$(this).find('dl:eq(1)').show();
+			},function(){
+				$(this).find('dl:eq(1)').hide();
+			});		
+		});
+		</script>
+	</body>
+	</html>

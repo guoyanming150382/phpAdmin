@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.min.js"></script>
+	<style>
+		*{
+			padding: 0;margin: 0;
+		}
+		.cagku{
+			border: 1px solid #000;
+		}
+		#upload{
+			margin: 30px ;
+			width: 80px;height: 80px;
+			position: relative;
+		}
+		.poi{
+			position: absolute;
+			left: 0;top: 0;
+			width: 80px;
+			height: 80px;
+		}
+		#file{
+			cursor: pointer;
+			width: 80px;
+			height: 80px;
+			opacity: 0;
+			position: absolute;
+			left: 0;top: 0;
+		}
+		.cagku img{
+			width: 80px;height: 80px;
+		}
+	</style>
+</head>
+<body>
+	<div class="cagku">
+		图片
+	</div>
+	<div id="upload">
+		<img src="add.png" class="poi">
+		<input type="file" id="file">
+	</div>
+	<script type="text/javascript">
+		var OU=document.getElementById('upload')
+		var oF=document.getElementById('file')
+		var OP=document.getElementsByClassName('poi')[0]
+		var oshow=document.getElementsByClassName('cagku')[0]
+
+		oF.onchange=function(){
+			var formimg=new FormData();
+			formimg.append('file',oF.files[0])
+			$.ajax({
+				url:'index.php',
+				type:'post',
+				data:formimg,
+				dataType:'json',
+				cache: false,//不缓存
+			   	processData: false,//告诉jQuery不要去处理发送的数据
+			   	contentType: false,
+			   	success:function(res){
+			   		if(res.code==200){
+			   			// 预览图片
+			   			var reads = new FileReader()
+			   			var tu=document.getElementById('file').files[0];
+			   			reads.readAsDataURL(tu)
+			   			reads.onload=function(e){
+			   				var imgOBJ=document.createElement('img')
+			   				imgOBJ.src=this.result
+			   				console.log('69',this.result)
+			   				oshow.append(imgOBJ)
+			   			}
+			   		}
+			   	}
+			})
+		}
+	</script>
+</body>
+</html>

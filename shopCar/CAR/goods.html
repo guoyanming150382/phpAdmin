@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+	<div class="all">
+		<ul>
+			<li>
+				<span>带鱼</span>
+				<span>ID1</span>
+				<input type="text" type="button" value="加入">
+			</li>
+			<li>
+				<span>带鱼</span>
+				<span>ID2</span>
+				<input type="text" type="button" value="加入">
+			</li>
+			<li>
+				<span>带鱼</span>
+				<span>ID3</span>
+				<input type="text" type="button" value="加入">
+			</li>
+			<li>
+				<span>带鱼</span>
+				<span>ID4</span>
+				<input type="text" type="button" value="加入">
+			</li>
+			<li>
+				<span>带鱼</span>
+				<span>ID5</span>
+				<input type="text" type="button" value="加入">
+			</li>
+			<li>
+				<span>带鱼</span>
+				<span>ID6</span>
+				<input type="text" type="button" value="加入">
+			</li>
+		</ul>
+		<a href="goodsXiangqing.html" >查看购物车</a>
+	</div>
+</body>
+<script type="text/javascript">
+	window.onload=function(){
+		// 判断cookie是否存在
+		var arr=cookieCollect.getCookie("car") ? JSON.parse(cookieCollect.getCookie('car')) : []
+
+		var oBtn=document.getElementsByClassName('input');
+		for(var i=0;i<oBtn.length;i++){
+			oBtn[i].onclick=function(){
+				// 商品的名字
+				var gName=this.parentNode.children[0].innerHTML;
+				// 商品的id
+				var gId=this.parentNode.children[1].innerHTML;
+				// 商品价格
+				var gPrice=this.parentNode.children[2].innerHTML;
+
+				// 判断数组中的商品id与cookie中的是否一样
+				for(var j=0;j<arr.length;j++){
+					if(arr[j].gId==gId){
+						arr[j].num++
+						break;
+					}
+				}
+				if(i=arr.length){
+					var goods={
+						"gId":gId,
+						"gName":gName,
+						"gPrice":gPrice
+					}
+					arr.push(goods)
+				}
+			}
+		}
+
+		// 设置cookie
+		var date=new Date();
+		date.setDate(date.getDate()+10)
+		cookieCollect.setCookie('car',JSON.stringify(arr),date)
+	}
+</script>
+</html>
